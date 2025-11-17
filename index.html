@@ -497,6 +497,82 @@
             margin-top: 20px;
         }
 
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .close-btn:hover {
+            color: var(--dark);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 992px) {
             .container {
@@ -571,6 +647,10 @@
             th, td {
                 padding: 10px 5px;
                 font-size: 14px;
+            }
+
+            .modal-content {
+                padding: 20px;
             }
         }
     </style>
@@ -704,7 +784,7 @@
             <div id="profile" class="section">
                 <div class="section-header">
                     <h2>Perfil Académico</h2>
-                    <button class="btn"><i class="fas fa-edit"></i> Editar Perfil</button>
+                    <button class="btn" id="edit-profile-btn"><i class="fas fa-edit"></i> Editar Perfil</button>
                 </div>
 
                 <div class="dashboard-cards">
@@ -717,15 +797,15 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Nombre Completo</label>
-                            <input type="text" class="form-input" value="Ana Rodríguez" readonly>
+                            <input type="text" class="form-input" id="profile-name" value="Ana Rodríguez" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-input" value="ana.rodriguez@universidad.edu" readonly>
+                            <input type="email" class="form-input" id="profile-email" value="ana.rodriguez@universidad.edu" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Teléfono</label>
-                            <input type="tel" class="form-input" value="+34 612 345 678" readonly>
+                            <input type="tel" class="form-input" id="profile-phone" value="+34 612 345 678" readonly>
                         </div>
                     </div>
 
@@ -738,19 +818,19 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Carrera(s)</label>
-                            <input type="text" class="form-input" value="Medicina y Enfermería" readonly>
+                            <input type="text" class="form-input" id="profile-career" value="Medicina y Enfermería" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Año Actual</label>
-                            <input type="text" class="form-input" value="3er Año" readonly>
+                            <input type="text" class="form-input" id="profile-year" value="3er Año" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Promedio General</label>
-                            <input type="text" class="form-input" value="8.2" readonly>
+                            <input type="text" class="form-input" id="profile-average" value="8.2" readonly>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Créditos Aprobados</label>
-                            <input type="text" class="form-input" value="130 / 200" readonly>
+                            <input type="text" class="form-input" id="profile-credits" value="130 / 200" readonly>
                         </div>
                     </div>
                 </div>
@@ -764,7 +844,7 @@
                 </div>
 
                 <div class="filters">
-                    <select class="filter-select">
+                    <select class="filter-select" id="achievement-type-filter">
                         <option>Todos los tipos</option>
                         <option>Examen aprobado</option>
                         <option>Práctica realizada</option>
@@ -772,13 +852,13 @@
                         <option>Congreso</option>
                         <option>Voluntariado</option>
                     </select>
-                    <select class="filter-select">
+                    <select class="filter-select" id="achievement-category-filter">
                         <option>Todas las categorías</option>
                         <option>Medicina</option>
                         <option>Enfermería</option>
                     </select>
-                    <input type="date" class="filter-select" placeholder="Fecha desde">
-                    <input type="date" class="filter-select" placeholder="Fecha hasta">
+                    <input type="date" class="filter-select" id="achievement-date-from" placeholder="Fecha desde">
+                    <input type="date" class="filter-select" id="achievement-date-to" placeholder="Fecha hasta">
                 </div>
 
                 <div class="table-container">
@@ -792,17 +872,17 @@
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="achievements-table-body">
                             <tr>
                                 <td>Anatomía Aprobada</td>
                                 <td>Examen aprobado</td>
                                 <td>Medicina</td>
                                 <td>15/09/2023</td>
                                 <td>
-                                    <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                                    <button class="btn btn-secondary edit-achievement" style="padding: 5px 10px; font-size: 12px;">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
+                                    <button class="btn delete-achievement" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -813,10 +893,10 @@
                                 <td>Enfermería</td>
                                 <td>22/08/2023</td>
                                 <td>
-                                    <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                                    <button class="btn btn-secondary edit-achievement" style="padding: 5px 10px; font-size: 12px;">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
+                                    <button class="btn delete-achievement" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -827,10 +907,10 @@
                                 <td>Medicina</td>
                                 <td>10/07/2023</td>
                                 <td>
-                                    <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 12px;">
+                                    <button class="btn btn-secondary edit-achievement" style="padding: 5px 10px; font-size: 12px;">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
+                                    <button class="btn delete-achievement" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -844,16 +924,16 @@
             <div id="subjects" class="section">
                 <div class="section-header">
                     <h2>Materias y Avances</h2>
-                    <button class="btn"><i class="fas fa-plus"></i> Agregar Materia</button>
+                    <button class="btn" id="add-subject-btn"><i class="fas fa-plus"></i> Agregar Materia</button>
                 </div>
 
                 <div class="filters">
-                    <select class="filter-select">
+                    <select class="filter-select" id="subject-career-filter">
                         <option>Todas las carreras</option>
                         <option>Medicina</option>
                         <option>Enfermería</option>
                     </select>
-                    <select class="filter-select">
+                    <select class="filter-select" id="subject-status-filter">
                         <option>Todos los estados</option>
                         <option>Pendiente</option>
                         <option>Cursando</option>
@@ -874,7 +954,7 @@
                                 <th>Progreso</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="subjects-table-body">
                             <tr>
                                 <td>Farmacología</td>
                                 <td>Medicina</td>
@@ -932,15 +1012,15 @@
             <div id="calendar" class="section">
                 <div class="section-header">
                     <h2>Calendario Académico</h2>
-                    <button class="btn"><i class="fas fa-plus"></i> Agregar Evento</button>
+                    <button class="btn" id="add-event-btn"><i class="fas fa-plus"></i> Agregar Evento</button>
                 </div>
 
                 <div class="calendar">
                     <div class="calendar-header">
                         <h3>Octubre 2023</h3>
                         <div>
-                            <button class="btn btn-secondary"><i class="fas fa-chevron-left"></i></button>
-                            <button class="btn btn-secondary"><i class="fas fa-chevron-right"></i></button>
+                            <button class="btn btn-secondary" id="prev-month-btn"><i class="fas fa-chevron-left"></i></button>
+                            <button class="btn btn-secondary" id="next-month-btn"><i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
                     <div class="calendar-grid">
@@ -1029,7 +1109,7 @@
             <div id="practices" class="section">
                 <div class="section-header">
                     <h2>Prácticas Clínicas / Rotaciones</h2>
-                    <button class="btn"><i class="fas fa-plus"></i> Agregar Práctica</button>
+                    <button class="btn" id="add-practice-btn"><i class="fas fa-plus"></i> Agregar Práctica</button>
                 </div>
 
                 <div class="table-container">
@@ -1043,7 +1123,7 @@
                                 <th>Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="practices-table-body">
                             <tr>
                                 <td>Cardiología</td>
                                 <td>Hospital Central</td>
@@ -1115,8 +1195,8 @@
                         </div>
                         <p>Descarga todos tus datos académicos en formato PDF o Excel para mantener un respaldo fuera de línea.</p>
                         <div class="form-actions">
-                            <button class="btn"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
-                            <button class="btn btn-secondary"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                            <button class="btn" id="export-pdf-btn"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+                            <button class="btn btn-secondary" id="export-excel-btn"><i class="fas fa-file-excel"></i> Exportar Excel</button>
                         </div>
                     </div>
 
@@ -1130,14 +1210,14 @@
                         <p>Configura respaldos automáticos para que tus datos se guarden periódicamente sin necesidad de intervención manual.</p>
                         <div class="form-group">
                             <label class="form-label">Frecuencia de respaldo</label>
-                            <select class="form-select">
+                            <select class="form-select" id="backup-frequency">
                                 <option>Diariamente</option>
                                 <option>Semanalmente</option>
                                 <option>Mensualmente</option>
                             </select>
                         </div>
                         <div class="form-actions">
-                            <button class="btn"><i class="fas fa-save"></i> Guardar Configuración</button>
+                            <button class="btn" id="save-backup-settings-btn"><i class="fas fa-save"></i> Guardar Configuración</button>
                         </div>
                     </div>
                 </div>
@@ -1152,18 +1232,37 @@
                     <p>Restaura tus datos desde un archivo de respaldo anterior en caso de pérdida de información.</p>
                     <div class="form-group">
                         <label class="form-label">Seleccionar archivo de respaldo</label>
-                        <input type="file" class="form-input">
+                        <input type="file" class="form-input" id="backup-file">
                     </div>
                     <div class="form-actions">
-                        <button class="btn"><i class="fas fa-upload"></i> Restaurar Datos</button>
+                        <button class="btn" id="restore-data-btn"><i class="fas fa-upload"></i> Restaurar Datos</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal para formularios -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Título del Modal</h3>
+                <button class="close-btn" id="close-modal-btn">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- Contenido del modal se insertará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Operación completada con éxito</span>
+    </div>
+
     <script>
-        // Navegación entre secciones - CÓDIGO SIMPLIFICADO Y FUNCIONAL
+        // Navegación entre secciones
         document.addEventListener('DOMContentLoaded', function() {
             // Seleccionar todos los enlaces de navegación
             const navLinks = document.querySelectorAll('.nav-link');
@@ -1206,6 +1305,9 @@
             
             // Inicializar gráficos
             initializeCharts();
+            
+            // Inicializar funcionalidades de botones
+            initializeButtons();
         });
 
         // Función para inicializar los gráficos
@@ -1333,6 +1435,677 @@
                     }
                 });
             }
+        }
+
+        // Función para inicializar todos los botones
+        function initializeButtons() {
+            // Botón Editar Perfil
+            const editProfileBtn = document.getElementById('edit-profile-btn');
+            if (editProfileBtn) {
+                editProfileBtn.addEventListener('click', function() {
+                    toggleProfileEditMode();
+                });
+            }
+
+            // Botón Agregar Logro
+            const addAchievementBtn = document.getElementById('add-achievement-btn');
+            if (addAchievementBtn) {
+                addAchievementBtn.addEventListener('click', function() {
+                    showAchievementForm();
+                });
+            }
+
+            // Botón Agregar Materia
+            const addSubjectBtn = document.getElementById('add-subject-btn');
+            if (addSubjectBtn) {
+                addSubjectBtn.addEventListener('click', function() {
+                    showSubjectForm();
+                });
+            }
+
+            // Botón Agregar Evento
+            const addEventBtn = document.getElementById('add-event-btn');
+            if (addEventBtn) {
+                addEventBtn.addEventListener('click', function() {
+                    showEventForm();
+                });
+            }
+
+            // Botón Agregar Práctica
+            const addPracticeBtn = document.getElementById('add-practice-btn');
+            if (addPracticeBtn) {
+                addPracticeBtn.addEventListener('click', function() {
+                    showPracticeForm();
+                });
+            }
+
+            // Botones de Backup
+            const exportPdfBtn = document.getElementById('export-pdf-btn');
+            if (exportPdfBtn) {
+                exportPdfBtn.addEventListener('click', function() {
+                    exportData('PDF');
+                });
+            }
+
+            const exportExcelBtn = document.getElementById('export-excel-btn');
+            if (exportExcelBtn) {
+                exportExcelBtn.addEventListener('click', function() {
+                    exportData('Excel');
+                });
+            }
+
+            const saveBackupSettingsBtn = document.getElementById('save-backup-settings-btn');
+            if (saveBackupSettingsBtn) {
+                saveBackupSettingsBtn.addEventListener('click', function() {
+                    saveBackupSettings();
+                });
+            }
+
+            const restoreDataBtn = document.getElementById('restore-data-btn');
+            if (restoreDataBtn) {
+                restoreDataBtn.addEventListener('click', function() {
+                    restoreData();
+                });
+            }
+
+            // Botones de navegación del calendario
+            const prevMonthBtn = document.getElementById('prev-month-btn');
+            if (prevMonthBtn) {
+                prevMonthBtn.addEventListener('click', function() {
+                    navigateCalendar('prev');
+                });
+            }
+
+            const nextMonthBtn = document.getElementById('next-month-btn');
+            if (nextMonthBtn) {
+                nextMonthBtn.addEventListener('click', function() {
+                    navigateCalendar('next');
+                });
+            }
+
+            // Botones de eliminar logros
+            const deleteAchievementBtns = document.querySelectorAll('.delete-achievement');
+            deleteAchievementBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    deleteAchievement(this);
+                });
+            });
+
+            // Botones de editar logros
+            const editAchievementBtns = document.querySelectorAll('.edit-achievement');
+            editAchievementBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    editAchievement(this);
+                });
+            });
+
+            // Botón cerrar modal
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', function() {
+                    closeModal();
+                });
+            }
+
+            // Cerrar modal al hacer clic fuera
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+        }
+
+        // Función para alternar modo edición del perfil
+        function toggleProfileEditMode() {
+            const inputs = document.querySelectorAll('#profile input');
+            const editBtn = document.getElementById('edit-profile-btn');
+            
+            const isEditing = inputs[0].hasAttribute('readonly');
+            
+            if (isEditing) {
+                // Activar edición
+                inputs.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.style.backgroundColor = '#f8f9fa';
+                });
+                editBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+                editBtn.style.backgroundColor = 'var(--success)';
+                showToast('Modo edición activado');
+            } else {
+                // Guardar cambios
+                inputs.forEach(input => {
+                    input.setAttribute('readonly', true);
+                    input.style.backgroundColor = '';
+                });
+                editBtn.innerHTML = '<i class="fas fa-edit"></i> Editar Perfil';
+                editBtn.style.backgroundColor = 'var(--primary)';
+                showToast('Perfil actualizado correctamente');
+            }
+        }
+
+        // Función para mostrar formulario de logro
+        function showAchievementForm() {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Agregar Logro Académico';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Título del Logro</label>
+                    <input type="text" class="form-input" id="achievement-title" placeholder="Ej: Anatomía Aprobada">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Logro</label>
+                    <select class="form-select" id="achievement-type">
+                        <option value="">Seleccionar tipo</option>
+                        <option>Examen aprobado</option>
+                        <option>Práctica realizada</option>
+                        <option>Certificado</option>
+                        <option>Congreso</option>
+                        <option>Voluntariado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select class="form-select" id="achievement-category">
+                        <option value="">Seleccionar categoría</option>
+                        <option>Medicina</option>
+                        <option>Enfermería</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-input" id="achievement-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-textarea" id="achievement-description" placeholder="Descripción del logro..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancel-achievement-btn">Cancelar</button>
+                    <button class="btn" id="save-achievement-btn">Guardar Logro</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar eventos para los botones del modal
+            document.getElementById('cancel-achievement-btn').addEventListener('click', closeModal);
+            document.getElementById('save-achievement-btn').addEventListener('click', saveAchievement);
+        }
+
+        // Función para guardar logro
+        function saveAchievement() {
+            const title = document.getElementById('achievement-title').value;
+            const type = document.getElementById('achievement-type').value;
+            const category = document.getElementById('achievement-category').value;
+            const date = document.getElementById('achievement-date').value;
+            
+            if (!title || !type || !category || !date) {
+                showToast('Por favor, completa todos los campos', 'error');
+                return;
+            }
+            
+            // Formatear fecha
+            const formattedDate = new Date(date).toLocaleDateString('es-ES');
+            
+            // Agregar a la tabla
+            const tableBody = document.getElementById('achievements-table-body');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${title}</td>
+                <td>${type}</td>
+                <td>${category}</td>
+                <td>${formattedDate}</td>
+                <td>
+                    <button class="btn btn-secondary edit-achievement" style="padding: 5px 10px; font-size: 12px;">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn delete-achievement" style="padding: 5px 10px; font-size: 12px; background-color: var(--danger);">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+            
+            // Reasignar eventos a los botones de la nueva fila
+            newRow.querySelector('.delete-achievement').addEventListener('click', function() {
+                deleteAchievement(this);
+            });
+            newRow.querySelector('.edit-achievement').addEventListener('click', function() {
+                editAchievement(this);
+            });
+            
+            closeModal();
+            showToast('Logro agregado correctamente');
+        }
+
+        // Función para eliminar logro
+        function deleteAchievement(button) {
+            const row = button.closest('tr');
+            row.remove();
+            showToast('Logro eliminado correctamente');
+        }
+
+        // Función para editar logro
+        function editAchievement(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Editar Logro Académico';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Título del Logro</label>
+                    <input type="text" class="form-input" id="edit-achievement-title" value="${cells[0].textContent}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Logro</label>
+                    <select class="form-select" id="edit-achievement-type">
+                        <option value="">Seleccionar tipo</option>
+                        <option ${cells[1].textContent === 'Examen aprobado' ? 'selected' : ''}>Examen aprobado</option>
+                        <option ${cells[1].textContent === 'Práctica realizada' ? 'selected' : ''}>Práctica realizada</option>
+                        <option ${cells[1].textContent === 'Certificado' ? 'selected' : ''}>Certificado</option>
+                        <option ${cells[1].textContent === 'Congreso' ? 'selected' : ''}>Congreso</option>
+                        <option ${cells[1].textContent === 'Voluntariado' ? 'selected' : ''}>Voluntariado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <select class="form-select" id="edit-achievement-category">
+                        <option value="">Seleccionar categoría</option>
+                        <option ${cells[2].textContent === 'Medicina' ? 'selected' : ''}>Medicina</option>
+                        <option ${cells[2].textContent === 'Enfermería' ? 'selected' : ''}>Enfermería</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-input" id="edit-achievement-date" value="${formatDateForInput(cells[3].textContent)}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-textarea" id="edit-achievement-description" placeholder="Descripción del logro..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancel-edit-achievement-btn">Cancelar</button>
+                    <button class="btn" id="update-achievement-btn">Actualizar Logro</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar eventos para los botones del modal
+            document.getElementById('cancel-edit-achievement-btn').addEventListener('click', closeModal);
+            document.getElementById('update-achievement-btn').addEventListener('click', function() {
+                updateAchievement(row);
+            });
+        }
+
+        // Función para actualizar logro
+        function updateAchievement(row) {
+            const title = document.getElementById('edit-achievement-title').value;
+            const type = document.getElementById('edit-achievement-type').value;
+            const category = document.getElementById('edit-achievement-category').value;
+            const date = document.getElementById('edit-achievement-date').value;
+            
+            if (!title || !type || !category || !date) {
+                showToast('Por favor, completa todos los campos', 'error');
+                return;
+            }
+            
+            // Formatear fecha
+            const formattedDate = new Date(date).toLocaleDateString('es-ES');
+            
+            // Actualizar la fila
+            const cells = row.querySelectorAll('td');
+            cells[0].textContent = title;
+            cells[1].textContent = type;
+            cells[2].textContent = category;
+            cells[3].textContent = formattedDate;
+            
+            closeModal();
+            showToast('Logro actualizado correctamente');
+        }
+
+        // Función para mostrar formulario de materia
+        function showSubjectForm() {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Agregar Materia';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Materia</label>
+                    <input type="text" class="form-input" id="subject-name" placeholder="Ej: Farmacología">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Carrera</label>
+                    <select class="form-select" id="subject-career">
+                        <option value="">Seleccionar carrera</option>
+                        <option>Medicina</option>
+                        <option>Enfermería</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Año</label>
+                    <select class="form-select" id="subject-year">
+                        <option value="">Seleccionar año</option>
+                        <option>1er Año</option>
+                        <option>2do Año</option>
+                        <option>3er Año</option>
+                        <option>4to Año</option>
+                        <option>5to Año</option>
+                        <option>6to Año</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="subject-status">
+                        <option value="">Seleccionar estado</option>
+                        <option>Pendiente</option>
+                        <option>Cursando</option>
+                        <option>Aprobado</option>
+                        <option>Final aprobado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nota</label>
+                    <input type="number" class="form-input" id="subject-grade" min="0" max="10" step="0.1" placeholder="0-10">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Progreso (%)</label>
+                    <input type="number" class="form-input" id="subject-progress" min="0" max="100" placeholder="0-100">
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancel-subject-btn">Cancelar</button>
+                    <button class="btn" id="save-subject-btn">Guardar Materia</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar eventos para los botones del modal
+            document.getElementById('cancel-subject-btn').addEventListener('click', closeModal);
+            document.getElementById('save-subject-btn').addEventListener('click', saveSubject);
+        }
+
+        // Función para guardar materia
+        function saveSubject() {
+            const name = document.getElementById('subject-name').value;
+            const career = document.getElementById('subject-career').value;
+            const year = document.getElementById('subject-year').value;
+            const status = document.getElementById('subject-status').value;
+            const grade = document.getElementById('subject-grade').value;
+            const progress = document.getElementById('subject-progress').value;
+            
+            if (!name || !career || !year || !status) {
+                showToast('Por favor, completa todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            // Determinar clase de estado
+            let statusClass = 'status-pending';
+            if (status === 'Cursando') statusClass = 'status-in-progress';
+            if (status === 'Aprobado' || status === 'Final aprobado') statusClass = 'status-completed';
+            
+            // Agregar a la tabla
+            const tableBody = document.getElementById('subjects-table-body');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${career}</td>
+                <td>${year}</td>
+                <td><span class="status ${statusClass}">${status}</span></td>
+                <td>${grade || '-'}</td>
+                <td>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: ${progress || 0}%"></div>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+            
+            closeModal();
+            showToast('Materia agregada correctamente');
+        }
+
+        // Función para mostrar formulario de evento
+        function showEventForm() {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Agregar Evento';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Título del Evento</label>
+                    <input type="text" class="form-input" id="event-title" placeholder="Ej: Examen de Farmacología">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-input" id="event-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hora</label>
+                    <input type="time" class="form-input" id="event-time">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Evento</label>
+                    <select class="form-select" id="event-type">
+                        <option value="">Seleccionar tipo</option>
+                        <option>Examen</option>
+                        <option>Entrega</option>
+                        <option>Práctica</option>
+                        <option>Guardia</option>
+                        <option>Clase</option>
+                        <option>Reunión</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="form-textarea" id="event-description" placeholder="Descripción del evento..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancel-event-btn">Cancelar</button>
+                    <button class="btn" id="save-event-btn">Guardar Evento</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar eventos para los botones del modal
+            document.getElementById('cancel-event-btn').addEventListener('click', closeModal);
+            document.getElementById('save-event-btn').addEventListener('click', saveEvent);
+        }
+
+        // Función para guardar evento
+        function saveEvent() {
+            const title = document.getElementById('event-title').value;
+            const date = document.getElementById('event-date').value;
+            const time = document.getElementById('event-time').value;
+            const type = document.getElementById('event-type').value;
+            
+            if (!title || !date || !type) {
+                showToast('Por favor, completa todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            closeModal();
+            showToast('Evento agregado correctamente');
+        }
+
+        // Función para mostrar formulario de práctica
+        function showPracticeForm() {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = 'Agregar Práctica Clínica';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Servicio/Unidad</label>
+                    <input type="text" class="form-input" id="practice-service" placeholder="Ej: Cardiología">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Institución</label>
+                    <input type="text" class="form-input" id="practice-institution" placeholder="Ej: Hospital Central">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha de Inicio</label>
+                    <input type="date" class="form-input" id="practice-start-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Fecha de Fin</label>
+                    <input type="date" class="form-input" id="practice-end-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Supervisor</label>
+                    <input type="text" class="form-input" id="practice-supervisor" placeholder="Ej: Dr. Martínez">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select" id="practice-status">
+                        <option value="">Seleccionar estado</option>
+                        <option>Pendiente</option>
+                        <option>En curso</option>
+                        <option>Completada</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Actividades Realizadas</label>
+                    <textarea class="form-textarea" id="practice-activities" placeholder="Describe las actividades realizadas..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" id="cancel-practice-btn">Cancelar</button>
+                    <button class="btn" id="save-practice-btn">Guardar Práctica</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Configurar eventos para los botones del modal
+            document.getElementById('cancel-practice-btn').addEventListener('click', closeModal);
+            document.getElementById('save-practice-btn').addEventListener('click', savePractice);
+        }
+
+        // Función para guardar práctica
+        function savePractice() {
+            const service = document.getElementById('practice-service').value;
+            const institution = document.getElementById('practice-institution').value;
+            const startDate = document.getElementById('practice-start-date').value;
+            const endDate = document.getElementById('practice-end-date').value;
+            const supervisor = document.getElementById('practice-supervisor').value;
+            const status = document.getElementById('practice-status').value;
+            
+            if (!service || !institution || !startDate || !endDate || !supervisor || !status) {
+                showToast('Por favor, completa todos los campos obligatorios', 'error');
+                return;
+            }
+            
+            // Formatear fechas
+            const formattedStartDate = new Date(startDate).toLocaleDateString('es-ES');
+            const formattedEndDate = new Date(endDate).toLocaleDateString('es-ES');
+            
+            // Determinar clase de estado
+            let statusClass = 'status-pending';
+            if (status === 'En curso') statusClass = 'status-in-progress';
+            if (status === 'Completada') statusClass = 'status-completed';
+            
+            // Agregar a la tabla
+            const tableBody = document.getElementById('practices-table-body');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${service}</td>
+                <td>${institution}</td>
+                <td>${formattedStartDate} - ${formattedEndDate}</td>
+                <td>${supervisor}</td>
+                <td><span class="status ${statusClass}">${status}</span></td>
+            `;
+            tableBody.appendChild(newRow);
+            
+            closeModal();
+            showToast('Práctica agregada correctamente');
+        }
+
+        // Función para exportar datos
+        function exportData(format) {
+            showToast(`Exportando datos en formato ${format}...`);
+            // Simulación de exportación
+            setTimeout(() => {
+                showToast(`Datos exportados correctamente en formato ${format}`);
+            }, 1500);
+        }
+
+        // Función para guardar configuración de backup
+        function saveBackupSettings() {
+            const frequency = document.getElementById('backup-frequency').value;
+            showToast(`Configuración de respaldo guardada: ${frequency}`);
+        }
+
+        // Función para restaurar datos
+        function restoreData() {
+            const fileInput = document.getElementById('backup-file');
+            if (!fileInput.files.length) {
+                showToast('Por favor, selecciona un archivo de respaldo', 'error');
+                return;
+            }
+            
+            showToast('Restaurando datos desde el archivo...');
+            // Simulación de restauración
+            setTimeout(() => {
+                showToast('Datos restaurados correctamente');
+            }, 1500);
+        }
+
+        // Función para navegar en el calendario
+        function navigateCalendar(direction) {
+            const currentMonth = document.querySelector('.calendar h3').textContent;
+            showToast(`Navegando al mes ${direction === 'prev' ? 'anterior' : 'siguiente'} de ${currentMonth}`);
+        }
+
+        // Función para cerrar modal
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        // Función para mostrar notificación toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            
+            // Cambiar color según el tipo
+            if (type === 'error') {
+                toast.style.backgroundColor = 'var(--danger)';
+            } else {
+                toast.style.backgroundColor = 'var(--success)';
+            }
+            
+            toast.classList.add('show');
+            
+            // Ocultar después de 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Función auxiliar para formatear fecha para input date
+        function formatDateForInput(dateString) {
+            const parts = dateString.split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+            return '';
         }
     </script>
 </body>
