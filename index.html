@@ -1162,37 +1162,39 @@
     </div>
 
     <script>
-        // Navegación entre secciones
+        // Navegación entre secciones - CÓDIGO CORREGIDO
         document.addEventListener('DOMContentLoaded', function() {
             // Obtener todos los enlaces del menú
             const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.section');
-            const pageTitle = document.getElementById('page-title');
-
+            
             // Función para cambiar de sección
             function changeSection(targetId) {
                 // Ocultar todas las secciones
-                sections.forEach(section => {
+                document.querySelectorAll('.section').forEach(section => {
                     section.classList.remove('active');
                 });
-
+                
                 // Mostrar la sección objetivo
                 const targetSection = document.getElementById(targetId);
-                targetSection.classList.add('active');
-
-                // Actualizar el título de la página
-                const targetTitle = targetSection.querySelector('h2') ? targetSection.querySelector('h2').textContent : 'MedTrack';
-                pageTitle.textContent = targetTitle;
-
-                // Actualizar el enlace activo en el menú
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('data-target') === targetId) {
-                        link.classList.add('active');
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                    
+                    // Actualizar el título de la página
+                    const targetTitle = targetSection.querySelector('h2');
+                    if (targetTitle) {
+                        document.getElementById('page-title').textContent = targetTitle.textContent;
                     }
-                });
+                    
+                    // Actualizar el enlace activo en el menú
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('data-target') === targetId) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
             }
-
+            
             // Añadir evento click a cada enlace
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1201,7 +1203,7 @@
                     changeSection(targetId);
                 });
             });
-
+            
             // Inicializar gráficos
             initializeCharts();
         });
@@ -1209,118 +1211,128 @@
         // Función para inicializar los gráficos
         function initializeCharts() {
             // Gráfico de progreso general (Dashboard)
-            const progressCtx = document.getElementById('progressChart').getContext('2d');
-            const progressChart = new Chart(progressCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completado', 'Pendiente'],
-                    datasets: [{
-                        data: [65, 35],
-                        backgroundColor: ['#3498db', '#ecf0f1'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Gráfico de materias por año (Estadísticas)
-            const subjectsByYearCtx = document.getElementById('subjectsByYearChart').getContext('2d');
-            const subjectsByYearChart = new Chart(subjectsByYearCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['1er Año', '2do Año', '3er Año'],
-                    datasets: [{
-                        label: 'Materias Aprobadas',
-                        data: [8, 10, 5],
-                        backgroundColor: '#3498db'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 2
+            const progressCtx = document.getElementById('progressChart');
+            if (progressCtx) {
+                const progressChart = new Chart(progressCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completado', 'Pendiente'],
+                        datasets: [{
+                            data: [65, 35],
+                            backgroundColor: ['#3498db', '#ecf0f1'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
                             }
                         }
                     }
-                }
-            });
+                });
+            }
+
+            // Gráfico de materias por año (Estadísticas)
+            const subjectsByYearCtx = document.getElementById('subjectsByYearChart');
+            if (subjectsByYearCtx) {
+                const subjectsByYearChart = new Chart(subjectsByYearCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1er Año', '2do Año', '3er Año'],
+                        datasets: [{
+                            label: 'Materias Aprobadas',
+                            data: [8, 10, 5],
+                            backgroundColor: '#3498db'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 2
+                                }
+                            }
+                        }
+                    }
+                });
+            }
 
             // Gráfico de evolución del promedio (Estadísticas)
-            const averageCtx = document.getElementById('averageEvolutionChart').getContext('2d');
-            const averageChart = new Chart(averageCtx, {
-                type: 'line',
-                data: {
-                    labels: ['1er Año', '2do Año', '3er Año'],
-                    datasets: [{
-                        label: 'Promedio',
-                        data: [7.5, 8.0, 8.2],
-                        borderColor: '#1abc9c',
-                        tension: 0.1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 7,
-                            max: 10
+            const averageCtx = document.getElementById('averageEvolutionChart');
+            if (averageCtx) {
+                const averageChart = new Chart(averageCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1er Año', '2do Año', '3er Año'],
+                        datasets: [{
+                            label: 'Promedio',
+                            data: [7.5, 8.0, 8.2],
+                            borderColor: '#1abc9c',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                min: 7,
+                                max: 10
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
 
             // Gráfico de distribución de logros (Estadísticas)
-            const achievementsCtx = document.getElementById('achievementsChart').getContext('2d');
-            const achievementsChart = new Chart(achievementsCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Exámenes', 'Prácticas', 'Certificados', 'Congresos', 'Voluntariados'],
-                    datasets: [{
-                        data: [10, 5, 3, 2, 1],
-                        backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#e74c3c', '#f39c12']
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
+            const achievementsCtx = document.getElementById('achievementsChart');
+            if (achievementsCtx) {
+                const achievementsChart = new Chart(achievementsCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Exámenes', 'Prácticas', 'Certificados', 'Congresos', 'Voluntariados'],
+                        datasets: [{
+                            data: [10, 5, 3, 2, 1],
+                            backgroundColor: ['#3498db', '#1abc9c', '#9b59b6', '#e74c3c', '#f39c12']
+                        }]
+                    },
+                    options: {
+                        responsive: true
+                    }
+                });
+            }
 
             // Gráfico de horas de práctica (Estadísticas)
-            const practiceHoursCtx = document.getElementById('practiceHoursChart').getContext('2d');
-            const practiceHoursChart = new Chart(practiceHoursCtx, {
-                type: 'line',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-                    datasets: [{
-                        label: 'Horas de Práctica',
-                        data: [20, 25, 30, 22, 28, 35],
-                        borderColor: '#9b59b6',
-                        tension: 0.1,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
+            const practiceHoursCtx = document.getElementById('practiceHoursChart');
+            if (practiceHoursCtx) {
+                const practiceHoursChart = new Chart(practiceHoursCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Horas de Práctica',
+                            data: [20, 25, 30, 22, 28, 35],
+                            borderColor: '#9b59b6',
+                            tension: 0.1,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
         }
     </script>
 </body>
