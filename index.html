@@ -1262,6 +1262,10 @@
     </div>
 
     <script>
+        // =============================================
+        // FUNCIONES PRINCIPALES DE NAVEGACIÓN
+        // =============================================
+        
         // Navegación entre secciones
         document.addEventListener('DOMContentLoaded', function() {
             // Seleccionar todos los enlaces de navegación
@@ -1310,7 +1314,10 @@
             initializeButtons();
         });
 
-        // Función para inicializar los gráficos
+        // =============================================
+        // INICIALIZACIÓN DE GRÁFICOS
+        // =============================================
+        
         function initializeCharts() {
             // Gráfico de progreso general (Dashboard)
             const progressCtx = document.getElementById('progressChart');
@@ -1437,129 +1444,80 @@
             }
         }
 
-        // Función para inicializar todos los botones
+        // =============================================
+        // INICIALIZACIÓN DE TODOS LOS BOTONES
+        // =============================================
+        
         function initializeButtons() {
+            console.log("Inicializando botones...");
+            
             // Botón Editar Perfil
-            const editProfileBtn = document.getElementById('edit-profile-btn');
-            if (editProfileBtn) {
-                editProfileBtn.addEventListener('click', function() {
-                    toggleProfileEditMode();
-                });
-            }
-
+            document.getElementById('edit-profile-btn').addEventListener('click', toggleProfileEditMode);
+            
             // Botón Agregar Logro
-            const addAchievementBtn = document.getElementById('add-achievement-btn');
-            if (addAchievementBtn) {
-                addAchievementBtn.addEventListener('click', function() {
-                    showAchievementForm();
-                });
-            }
-
+            document.getElementById('add-achievement-btn').addEventListener('click', showAchievementForm);
+            
             // Botón Agregar Materia
-            const addSubjectBtn = document.getElementById('add-subject-btn');
-            if (addSubjectBtn) {
-                addSubjectBtn.addEventListener('click', function() {
-                    showSubjectForm();
-                });
-            }
-
+            document.getElementById('add-subject-btn').addEventListener('click', showSubjectForm);
+            
             // Botón Agregar Evento
-            const addEventBtn = document.getElementById('add-event-btn');
-            if (addEventBtn) {
-                addEventBtn.addEventListener('click', function() {
-                    showEventForm();
-                });
-            }
-
+            document.getElementById('add-event-btn').addEventListener('click', showEventForm);
+            
             // Botón Agregar Práctica
-            const addPracticeBtn = document.getElementById('add-practice-btn');
-            if (addPracticeBtn) {
-                addPracticeBtn.addEventListener('click', function() {
-                    showPracticeForm();
-                });
-            }
-
+            document.getElementById('add-practice-btn').addEventListener('click', showPracticeForm);
+            
             // Botones de Backup
-            const exportPdfBtn = document.getElementById('export-pdf-btn');
-            if (exportPdfBtn) {
-                exportPdfBtn.addEventListener('click', function() {
-                    exportData('PDF');
-                });
-            }
-
-            const exportExcelBtn = document.getElementById('export-excel-btn');
-            if (exportExcelBtn) {
-                exportExcelBtn.addEventListener('click', function() {
-                    exportData('Excel');
-                });
-            }
-
-            const saveBackupSettingsBtn = document.getElementById('save-backup-settings-btn');
-            if (saveBackupSettingsBtn) {
-                saveBackupSettingsBtn.addEventListener('click', function() {
-                    saveBackupSettings();
-                });
-            }
-
-            const restoreDataBtn = document.getElementById('restore-data-btn');
-            if (restoreDataBtn) {
-                restoreDataBtn.addEventListener('click', function() {
-                    restoreData();
-                });
-            }
-
+            document.getElementById('export-pdf-btn').addEventListener('click', function() {
+                exportData('PDF');
+            });
+            
+            document.getElementById('export-excel-btn').addEventListener('click', function() {
+                exportData('Excel');
+            });
+            
+            document.getElementById('save-backup-settings-btn').addEventListener('click', saveBackupSettings);
+            
+            document.getElementById('restore-data-btn').addEventListener('click', restoreData);
+            
             // Botones de navegación del calendario
-            const prevMonthBtn = document.getElementById('prev-month-btn');
-            if (prevMonthBtn) {
-                prevMonthBtn.addEventListener('click', function() {
-                    navigateCalendar('prev');
-                });
-            }
-
-            const nextMonthBtn = document.getElementById('next-month-btn');
-            if (nextMonthBtn) {
-                nextMonthBtn.addEventListener('click', function() {
-                    navigateCalendar('next');
-                });
-            }
-
-            // Botones de eliminar logros
-            const deleteAchievementBtns = document.querySelectorAll('.delete-achievement');
-            deleteAchievementBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    deleteAchievement(this);
-                });
+            document.getElementById('prev-month-btn').addEventListener('click', function() {
+                navigateCalendar('prev');
             });
-
-            // Botones de editar logros
-            const editAchievementBtns = document.querySelectorAll('.edit-achievement');
-            editAchievementBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editAchievement(this);
-                });
+            
+            document.getElementById('next-month-btn').addEventListener('click', function() {
+                navigateCalendar('next');
             });
-
+            
             // Botón cerrar modal
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', function() {
-                    closeModal();
-                });
-            }
-
+            document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+            
             // Cerrar modal al hacer clic fuera
-            const modal = document.getElementById('modal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
-                });
-            }
+            document.getElementById('modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+            
+            // Delegación de eventos para botones dinámicos (logros)
+            document.getElementById('achievements-table-body').addEventListener('click', function(e) {
+                if (e.target.closest('.delete-achievement')) {
+                    deleteAchievement(e.target.closest('.delete-achievement'));
+                }
+                if (e.target.closest('.edit-achievement')) {
+                    editAchievement(e.target.closest('.edit-achievement'));
+                }
+            });
+            
+            console.log("Botones inicializados correctamente");
         }
 
+        // =============================================
+        // FUNCIONALIDADES DE BOTONES
+        // =============================================
+        
         // Función para alternar modo edición del perfil
         function toggleProfileEditMode() {
+            console.log("Editando perfil...");
             const inputs = document.querySelectorAll('#profile input');
             const editBtn = document.getElementById('edit-profile-btn');
             
@@ -1588,6 +1546,7 @@
 
         // Función para mostrar formulario de logro
         function showAchievementForm() {
+            console.log("Mostrando formulario de logro...");
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -1640,6 +1599,7 @@
 
         // Función para guardar logro
         function saveAchievement() {
+            console.log("Guardando logro...");
             const title = document.getElementById('achievement-title').value;
             const type = document.getElementById('achievement-type').value;
             const category = document.getElementById('achievement-category').value;
@@ -1672,20 +1632,13 @@
             `;
             tableBody.appendChild(newRow);
             
-            // Reasignar eventos a los botones de la nueva fila
-            newRow.querySelector('.delete-achievement').addEventListener('click', function() {
-                deleteAchievement(this);
-            });
-            newRow.querySelector('.edit-achievement').addEventListener('click', function() {
-                editAchievement(this);
-            });
-            
             closeModal();
             showToast('Logro agregado correctamente');
         }
 
         // Función para eliminar logro
         function deleteAchievement(button) {
+            console.log("Eliminando logro...");
             const row = button.closest('tr');
             row.remove();
             showToast('Logro eliminado correctamente');
@@ -1693,6 +1646,7 @@
 
         // Función para editar logro
         function editAchievement(button) {
+            console.log("Editando logro...");
             const row = button.closest('tr');
             const cells = row.querySelectorAll('td');
             
@@ -1750,6 +1704,7 @@
 
         // Función para actualizar logro
         function updateAchievement(row) {
+            console.log("Actualizando logro...");
             const title = document.getElementById('edit-achievement-title').value;
             const type = document.getElementById('edit-achievement-type').value;
             const category = document.getElementById('edit-achievement-category').value;
@@ -1776,6 +1731,7 @@
 
         // Función para mostrar formulario de materia
         function showSubjectForm() {
+            console.log("Mostrando formulario de materia...");
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -1839,6 +1795,7 @@
 
         // Función para guardar materia
         function saveSubject() {
+            console.log("Guardando materia...");
             const name = document.getElementById('subject-name').value;
             const career = document.getElementById('subject-career').value;
             const year = document.getElementById('subject-year').value;
@@ -1879,6 +1836,7 @@
 
         // Función para mostrar formulario de evento
         function showEventForm() {
+            console.log("Mostrando formulario de evento...");
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -1928,6 +1886,7 @@
 
         // Función para guardar evento
         function saveEvent() {
+            console.log("Guardando evento...");
             const title = document.getElementById('event-title').value;
             const date = document.getElementById('event-date').value;
             const time = document.getElementById('event-time').value;
@@ -1944,6 +1903,7 @@
 
         // Función para mostrar formulario de práctica
         function showPracticeForm() {
+            console.log("Mostrando formulario de práctica...");
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modal-title');
             const modalBody = document.getElementById('modal-body');
@@ -1998,6 +1958,7 @@
 
         // Función para guardar práctica
         function savePractice() {
+            console.log("Guardando práctica...");
             const service = document.getElementById('practice-service').value;
             const institution = document.getElementById('practice-institution').value;
             const startDate = document.getElementById('practice-start-date').value;
@@ -2037,6 +1998,7 @@
 
         // Función para exportar datos
         function exportData(format) {
+            console.log(`Exportando datos en formato ${format}...`);
             showToast(`Exportando datos en formato ${format}...`);
             // Simulación de exportación
             setTimeout(() => {
@@ -2046,12 +2008,14 @@
 
         // Función para guardar configuración de backup
         function saveBackupSettings() {
+            console.log("Guardando configuración de backup...");
             const frequency = document.getElementById('backup-frequency').value;
             showToast(`Configuración de respaldo guardada: ${frequency}`);
         }
 
         // Función para restaurar datos
         function restoreData() {
+            console.log("Restaurando datos...");
             const fileInput = document.getElementById('backup-file');
             if (!fileInput.files.length) {
                 showToast('Por favor, selecciona un archivo de respaldo', 'error');
@@ -2067,18 +2031,24 @@
 
         // Función para navegar en el calendario
         function navigateCalendar(direction) {
+            console.log(`Navegando calendario: ${direction}`);
             const currentMonth = document.querySelector('.calendar h3').textContent;
             showToast(`Navegando al mes ${direction === 'prev' ? 'anterior' : 'siguiente'} de ${currentMonth}`);
         }
 
+        // =============================================
+        // FUNCIONES AUXILIARES
+        // =============================================
+        
         // Función para cerrar modal
         function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
+            console.log("Cerrando modal...");
+            document.getElementById('modal').style.display = 'none';
         }
 
         // Función para mostrar notificación toast
         function showToast(message, type = 'success') {
+            console.log(`Mostrando toast: ${message}`);
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
             
